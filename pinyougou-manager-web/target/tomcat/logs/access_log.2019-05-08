@@ -1,0 +1,10 @@
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:46:24 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=10 HTTP/1.1" 500 4707 http-bio-9101-exec-1 3615
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:47:19 +0800] "GET /brand/findAll.do HTTP/1.1" 200 908 http-bio-9101-exec-3 2948
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:47:39 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 500 4707 http-bio-9101-exec-7 10
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:51:11 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 500 4707 http-bio-9101-exec-9 9
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:52:43 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 500 4707 http-bio-9101-exec-10 15
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:55:27 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 500 13435 http-bio-9101-exec-4 9706
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:55:28 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 500 13435 http-bio-9101-exec-3 10253
+0:0:0:0:0:0:0:1 - - [08/May/2019:21:55:28 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 500 13435 http-bio-9101-exec-2 10841
+0:0:0:0:0:0:0:1 - - [08/May/2019:22:01:08 +0800] "GET /brand/findPage.do?pageNum=1&pageSize=5 HTTP/1.1" 200 224 http-bio-9101-exec-2 11072
+0:0:0:0:0:0:0:1 - - [08/May/2019:22:01:35 +0800] "GET /brand/findPage.do?pageNum=2&pageSize=5 HTTP/1.1" 200 222 http-bio-9101-exec-4 42

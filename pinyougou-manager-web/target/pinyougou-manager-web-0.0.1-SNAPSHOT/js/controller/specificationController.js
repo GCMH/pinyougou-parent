@@ -1,7 +1,7 @@
  //控制层 
-app.controller('specificationController' ,function($scope,$controller ,specificationService){	
+app.controller("specificationController" ,function($scope,$controller ,specificationService){	
 	
-	$controller('baseController',{$scope:$scope});//继承
+	$controller("baseController",{$scope:$scope});//继承
 	
     //读取列表数据绑定到表单中  
 	$scope.findAll=function(){
@@ -34,10 +34,10 @@ app.controller('specificationController' ,function($scope,$controller ,specifica
 	//保存 
 	$scope.save=function(){				
 		var serviceObject;//服务层对象  				
-		if($scope.entity.id!=null){//如果有ID
-			serviceObject=specificationService.update( $scope.entity ); //修改  
+		if($scope.entity.specification.id!=null){//如果有ID
+			serviceObject=specificationService.update($scope.entity); //修改  
 		}else{
-			serviceObject=specificationService.add( $scope.entity  );//增加 
+			serviceObject=specificationService.add($scope.entity);//增加 
 		}				
 		serviceObject.success(
 			function(response){
@@ -69,13 +69,24 @@ app.controller('specificationController' ,function($scope,$controller ,specifica
 	
 	//搜索
 	$scope.query=function(page,rows){	
-		alert("into query");
+		//alert("into query");
 		specificationService.query(page,rows,$scope.searchEntity).success(
 			function(response){
 				$scope.list=response.rows;	
 				$scope.paginationConf.totalItems=response.total;//更新总记录数
 			}			
 		);
+	}
+	
+	
+	//添加规格行
+	$scope.addTableRow = function(){
+		$scope.entity.specificationOptionList.push({});
+	}
+	
+	//删除规格行
+	$scope.deleTableRow = function(index){
+		$scope.entity.specificationOptionList.splice(index,1);
 	}
     
 });	

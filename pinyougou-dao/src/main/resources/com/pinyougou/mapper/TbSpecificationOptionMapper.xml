@@ -99,10 +99,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pinyougou.pojo.TbSpecificationOption" >
-    insert into tb_specification_option (id, option_name, spec_id, 
-      orders)
-    values (#{id,jdbcType=BIGINT}, #{optionName,jdbcType=VARCHAR}, #{specId,jdbcType=BIGINT}, 
-      #{orders,jdbcType=INTEGER})
+    insert into tb_specification_option (id, option_name, spec_id, orders)
+    values (#{id,jdbcType=BIGINT}, #{optionName,jdbcType=VARCHAR}, #{specId,jdbcType=BIGINT}, #{orders,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.pinyougou.pojo.TbSpecificationOption" >
     insert into tb_specification_option

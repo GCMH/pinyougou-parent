@@ -6,6 +6,7 @@ app.controller("baseController",function($scope){//父类控制器,其他控制�
 			itemsPerPage:10,	//当前页显示记录数
 			perPageOptions: [10,20,30,40,50],//页面显示记录数
 			onChange:function(){
+				//alert("into onChange");
 				$scope.reloadList();//页面加载分页栏时调用
 			}
 		};
@@ -13,7 +14,7 @@ app.controller("baseController",function($scope){//父类控制器,其他控制�
 	 //选中元素集合
 		$scope.selectIds = [];
 		$scope.selectUpdate = function($event,id){
-			//alert("iinto selectupdate");
+			//alert("into selectupdate");
 			if($event.target.checked){//选中品牌复选框则添加，取消则删除
 				$scope.selectIds.push(id);
 			}else{
@@ -24,7 +25,7 @@ app.controller("baseController",function($scope){//父类控制器,其他控制�
 		
 		 //刷新显示
 		$scope.reloadList = function(){
-			alert("into reloadList");
+			//alert("into reloadList");//注意清缓存
 			$scope.query($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
 		} 
 });

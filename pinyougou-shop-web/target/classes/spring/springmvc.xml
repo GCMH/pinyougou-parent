@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -20,12 +21,11 @@
 	        </array>
 	      </property>
 	    </bean>
-	  </mvc:message-converters>  
+	  </mvc:message-converters>
 	</mvc:annotation-driven>
 
 	<!-- 引用dubbo 服务 -->
 	<dubbo:application name="pinyougou-shop-web" />
 	<dubbo:registry address="zookeeper://192.168.25.131:2181"/>
 	<dubbo:annotation package="com.pinyougou.shop.controller" />  	
-
 </beans>

@@ -53,16 +53,13 @@ angular.module('pagination', []).directive('tmPagination',[function(){
                 
 
                 // conf.currentPage
-                scope.conf.currentPage = parseInt(scope.conf.currentPage) ? parseInt(scope.conf.currentPage) : 1;
-                
-
+                scope.conf.currentPage = parseInt(scope.conf.currentPage) ? parseInt(scope.conf.currentPage) : 1;               
 
                 // conf.totalItems
                 scope.conf.totalItems = parseInt(scope.conf.totalItems) ? parseInt(scope.conf.totalItems) : 0;
 
                 // conf.itemsPerPage (default:15)
-                scope.conf.itemsPerPage = parseInt(scope.conf.itemsPerPage) ? parseInt(scope.conf.itemsPerPage) : 15;
-                
+                scope.conf.itemsPerPage = parseInt(scope.conf.itemsPerPage) ? parseInt(scope.conf.itemsPerPage) : 15;               
 
                 // numberOfPages
                 scope.conf.numberOfPages = Math.ceil(scope.conf.totalItems/scope.conf.itemsPerPage);
@@ -170,9 +167,7 @@ angular.module('pagination', []).directive('tmPagination',[function(){
                 if(scope.jumpPageNum !== ''){
                     scope.conf.currentPage = scope.jumpPageNum;
                 }
-            };
-
-            
+            };       
 
             scope.$watch(function() {
                 
@@ -181,15 +176,9 @@ angular.module('pagination', []).directive('tmPagination',[function(){
                     scope.conf.totalItems = 0;
                 }
 
-
-                var newValue = scope.conf.totalItems + ' ' +  scope.conf.currentPage + ' ' + scope.conf.itemsPerPage;
-                
+                var newValue = scope.conf.totalItems + ' ' +  scope.conf.currentPage + ' ' + scope.conf.itemsPerPage;    
                 
                 return newValue;
-
-                
-
-
             }, getPagination);
 
         }

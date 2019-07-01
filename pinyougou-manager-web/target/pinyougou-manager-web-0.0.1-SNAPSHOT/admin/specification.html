@@ -59,7 +59,7 @@
 			                      <thead>
 			                          <tr>
 			                              <th class="" style="padding-right:0px">
-			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue" ng-model="entity.specification.specName">
+			                                  <input id="selall" type="checkbox" class="icheckbox_square-blue">
 			                              </th> 
 										  <th class="sorting_asc">规格ID</th>
 									      <th class="sorting">规格名称</th>									     												
@@ -72,7 +72,7 @@
 				                          <td>{{entity.id}}</td>
 									      <td>{{entity.specName}}</td>
 		                                  <td class="text-center">                                           
-		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal">修改</button>                                           
+		                                 	  <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" ng-click="findOne(entity.id)">修改</button>                                           
 		                                  </td>
 			                          </tr>
 			                      </tbody>
@@ -98,7 +98,7 @@
 			<table class="table table-bordered table-striped"  width="800px">
 		      	<tr>
 		      		<td>规格名称</td>
-		      		<td><input  class="form-control" placeholder="规格名称" >  </td>
+		      		<td><input  class="form-control" placeholder="规格名称"  ng-model="entity.specification.specName">  </td>
 		      	</tr>
 			 </table>				
 			 
@@ -141,7 +141,6 @@
 	  </div>
 	</div>
 </div>    
-{{entity}}
 </body>
 
 </html>

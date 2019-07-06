@@ -68,7 +68,7 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 	$scope.searchEntity={};//定义搜索对象 
 	
 	//搜索
-	$scope.search=function(page,rows){			
+	$scope.query=function(page,rows){			
 		typeTemplateService.search(page,rows,$scope.searchEntity).success(
 			function(response){
 				$scope.list=response.rows;	

@@ -1,5 +1,5 @@
  //控制层 
-app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemplateService){	
+app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemplateService,brandService,specificationService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -68,7 +68,7 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 	$scope.searchEntity={};//定义搜索对象 
 	
 	//搜索
-	$scope.search=function(page,rows){			
+	$scope.query=function(page,rows){			
 		typeTemplateService.search(page,rows,$scope.searchEntity).success(
 			function(response){
 				$scope.list=response.rows;	
@@ -77,4 +77,22 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 		);
 	}
     
+	$scope.brandList={data:[]};
+	
+	$scope.findBrandList = function(){
+		brandService.selectOptionList().success(
+			function (response){
+				$scope.brandList = {data:response}
+			}
+		);
+	}
+	
+	$scope.specList={data:[]};
+	$scope.findSpecList = function(){
+		specificationService.selectOptionList().success(
+			function(response){
+				$scope.specList = {data:response}
+			}
+		);
+	}
 });	

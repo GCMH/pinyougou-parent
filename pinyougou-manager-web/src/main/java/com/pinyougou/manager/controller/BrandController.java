@@ -1,15 +1,14 @@
 package com.pinyougou.manager.controller;
 
-import java.io.BufferedInputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-
 import com.pinyougou.pojo.TbBrand;
 import com.pinyougou.sellergoods.service.BrandService;
 
@@ -36,7 +35,7 @@ public class BrandController {
 	 */
 	@RequestMapping("/findAll")
 	public List<TbBrand> findAll(){
-		System.out.println("------------into managerweb----------------" + new Date(System.currentTimeMillis()));
+	//	System.out.println("------------into managerweb----------------" + new Date(System.currentTimeMillis()));
 		List<TbBrand> tbBarndList = brandService.findAll();
 //		if(tbBarndList == null || tbBarndList.size() == 0) {
 //			System.out.println("manager result is null！");
@@ -122,5 +121,10 @@ public class BrandController {
 //			System.out.println(((TbBrand)(result.getRows().get(i))).getName());
 //		}
 		return result;
+	}
+	
+	@RequestMapping("/selectOptionList")
+	public List<Map> selectOptionList(){
+		return brandService.selectOptionList();
 	}
 }

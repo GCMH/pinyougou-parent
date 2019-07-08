@@ -30,4 +30,8 @@ app.service("brandService",function($http){
 			return $http.post("../brand/query.do?pageNum=" + currentPage + 
 				  	 		  "&pageSize=" +itemsPerPage, queryEntity);
 		}
+		
+		this.selectOptionList = function(){
+			return $http.get("../brand/selectOptionList.do");
+		}
 	});

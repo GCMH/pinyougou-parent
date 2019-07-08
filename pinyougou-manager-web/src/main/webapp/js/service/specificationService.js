@@ -28,5 +28,9 @@ app.service('specificationService',function($http){
 	//搜索
 	this.query=function(page,rows,searchEntity){
 		return $http.post('../specification/search.do?page='+page+"&rows="+rows, searchEntity);
-	}    	
+	}  
+	//查询品牌列表，填充select2
+	this.selectOptionList = function(){
+		return $http.get("../specification/selectOptionList.do");
+	}
 });

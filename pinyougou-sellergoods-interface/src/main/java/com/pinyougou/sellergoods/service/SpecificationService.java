@@ -1,5 +1,7 @@
 package com.pinyougou.sellergoods.service;
 import java.util.List;
+import java.util.Map;
+
 import com.pinyougou.pojo.TbSpecification;
 import com.pinyougou.pojogroup.Specification;
 
@@ -7,6 +9,26 @@ import entity.PageResult;
 /**
  * 服务层接口
  * @author Administrator
+ *
+ */
+/**
+ * @author 依风
+ *
+ */
+/**
+ * @author 依风
+ *
+ */
+/**
+ * @author 依风
+ *
+ */
+/**
+ * @author 依风
+ *
+ */
+/**
+ * @author 依风
  *
  */
 public interface SpecificationService {
@@ -59,4 +81,11 @@ public interface SpecificationService {
 	 */
 	public PageResult findPage(TbSpecification specification, int pageNum,int pageSize);
 	
+
+	
+	/**
+	 * 查询品牌选项，填充select2列表
+	 * @return
+	 */
+	public List<Map> selectOptionList(); 
 }

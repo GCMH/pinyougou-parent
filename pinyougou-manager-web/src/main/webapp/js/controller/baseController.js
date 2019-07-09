@@ -28,4 +28,16 @@ app.controller("baseController",function($scope){//父类控制器,其他控制�
 			//alert("into reloadList");//注意清缓存
 			$scope.query($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
 		} 
+		
+		//jsonString = [{"id":33,"text":"电视屏幕尺寸"},{"id":34,"text":"尺寸"}]
+		//jsonToString(jsonString,'text') = 电视屏幕尺寸,电视屏幕尺寸
+		$scope.jsonToString = function(jsonString,key){
+			var json = JSON.parse(jsonString);
+			var rValue = "";
+			for(var i = 0 ; i < json.length - 1; i++){
+				rValue += json[i][key] + "，";
+			}
+			rValue += json[json.length - 1][key];
+			return rValue;
+		}
 });

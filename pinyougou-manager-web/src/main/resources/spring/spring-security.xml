@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+	
+	<!-- 指定资源不启用security，即不检查  **代表该目录下所有子资源-->
+	<!-- 根目录下所有html->localhost:9010/*.html -->
+	<http pattern="/*.html" security="none"/>
+	<!-- 根目录下->localhost:9010/css/** -->
+	<http pattern="/css/**" security="none"/>
+	<http pattern="/img/**" security="none"/>
+	<http pattern="/js/**" security="none"/>
+	<http pattern="/plugins/**" security="none"/>
+	
+	<!-- 不启用SPEL表达式，默认启用。启用后需要这样写access=hasRole('USER') -->	
+	<http use-expressions="false">
+		<!-- 配置角色为USER才能访问当前资源及其子资源 -->
+		<intercept-url pattern="/**" access="ROLE_ADMIN"/>
+		<!-- 启用表单登录 -->
+		<!-- 登录页面，登录成功跳转页面，验证失败跳转页面。当前角色不是ROLE_USER无法访问/**下资源，跳转login_error.html,但login_error.html也是子资源故会反复跳转 -->
+		<!-- password-parameter="" 对应密码框name属性值，默认password -->
+		<!-- username-parameter="" 对应用户名框name属性值，默认username -->
+		<!-- login-processing-url="" 对应表单action属性值，默认/login -->
+		
+		<form-login  login-page="/login.html" default-target-url="/admin/index.html" authentication-failure-url="/login.html" />
+		<!-- 取消csrf跨站请求伪造保护 -->
+		<csrf disabled="true"/>
+		
+		<!-- 运行显示内置窗口 -->
+		<headers>
+			<frame-options policy="SAMEORIGIN"/>
+		</headers>
+	</http>	
+	
+	<!-- 身份验证管理 -->
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+			<!-- 配置一个用户，名为admin,密码是123456，角色是USER -->
+				<user name="admin" password="123456" authorities="ROLE_ADMIN"/>
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+	
+</beans:beans>

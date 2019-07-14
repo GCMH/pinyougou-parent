@@ -1,4 +1,5 @@
 package com.pinyougou.manager.controller;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,7 +81,16 @@ public class SellerController {
 	 */
 	@RequestMapping("/findOne")
 	public TbSeller findOne(String id){
-		return sellerService.findOne(id);		
+		try {
+			//tomcat传输url时以ISO-8859-1编码方式传输，需要将其转换为UTF-8
+			id = new String(id.getBytes("ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			System.err.println("findOne 编码异常");
+		}
+		TbSeller seller = sellerService.findOne(id);
+		//System.out.println("manager findOne:id="+ id + "-->" + seller);
+		return seller;		
 	}
 	
 	/**
@@ -109,6 +119,19 @@ public class SellerController {
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbSeller seller, int page, int rows  ){
 		return sellerService.findPage(seller, page, rows);		
+	}
+	
+	@RequestMapping("/updateStatus")
+	public Result updateStatus(String sellerId, String status) {
+		
+		try {
+			sellerId = new String(sellerId.getBytes("ISO-8859-1"));
+			sellerService.updateStatus(sellerId, status);
+			return new Result(true,"更新状态成功");
+		}catch (Exception e) {
+			// TODO: handle exception
+			return new Result(false,"更新状态失败");
+		}
 	}
 	
 }

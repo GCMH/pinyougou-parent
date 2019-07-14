@@ -26,6 +26,7 @@ app.controller("baseController",function($scope){//父类控制器,其他控制�
 		 //刷新显示
 		$scope.reloadList = function(){
 			//alert("into reloadList");//注意清缓存
+			//当前页，当前页记录数
 			$scope.query($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
 		} 
 		

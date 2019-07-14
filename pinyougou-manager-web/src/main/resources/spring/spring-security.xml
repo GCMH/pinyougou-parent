@@ -23,7 +23,7 @@
 		<!-- username-parameter="" 对应用户名框name属性值，默认username -->
 		<!-- login-processing-url="" 对应表单action属性值，默认/login -->
 		
-		<form-login  login-page="/login.html" default-target-url="/admin/index.html" authentication-failure-url="/login.html" />
+		<form-login  login-page="/login.html" default-target-url="/admin/index.html" authentication-failure-url="/login.html" always-use-default-target="true"/>
 		<!-- 取消csrf跨站请求伪造保护 -->
 		<csrf disabled="true"/>
 		
@@ -31,6 +31,8 @@
 		<headers>
 			<frame-options policy="SAMEORIGIN"/>
 		</headers>
+		<!-- 默认添加一退出url:/logout, 如需修改可通过logout-url修改，logout-success-url可指定退出后跳转地址，不指定默认登录页面 -->
+		<logout/>
 	</http>	
 	
 	<!-- 身份验证管理 -->

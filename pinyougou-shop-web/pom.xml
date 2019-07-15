@@ -104,6 +104,20 @@
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
 	
+	<!-- 文件上传相关 -->
+		<!-- <dependency>
+			<groupId>org.csoruce.fastdfs</groupId>
+			<artifactId>fastdfs</artifactId>
+			<version> 5.0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency> -->
+	
+	
+	
    </dependencies>
   
   

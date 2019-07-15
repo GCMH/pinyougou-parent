@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbItemCat;
@@ -111,4 +112,13 @@ public class ItemCatController {
 		return itemCatService.findPage(itemCat, page, rows);		
 	}
 	
+	/**
+	 * 查询当前商品级别的商品
+	 * @param parentId
+	 * @return
+	 */
+	@RequestMapping("/findByParentId")
+	public List<TbItemCat> findByParentId(Long parentId){
+		return itemCatService.findByPraentId(parentId);
+	}
 }

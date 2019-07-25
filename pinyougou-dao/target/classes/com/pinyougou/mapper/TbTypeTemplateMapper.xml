@@ -208,4 +208,10 @@
       custom_attribute_items = #{customAttributeItems,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+   <!-- 返回{id：1,text:xxx}格式，用于select2显示 -->
+  <select id="selectOptionList" resultType = "java.util.Map">
+ 	SELECT id, name AS text
+ 	FROM tb_type_template
+ </select>
 </mapper>

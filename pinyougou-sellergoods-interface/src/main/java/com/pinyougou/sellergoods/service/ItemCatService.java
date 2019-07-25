@@ -47,8 +47,9 @@ public interface ItemCatService {
 	/**
 	 * 批量删除
 	 * @param ids
+	 * @throws Exception 
 	 */
-	public void delete(Long [] ids);
+	public void delete(Long [] ids) throws Exception;
 
 	/**
 	 * 分页

@@ -96,7 +96,7 @@ public class ItemCatController {
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Result(false, "删除失败");
+			return new Result(false, "存在子级商品："+e.getMessage());
 		}
 	}
 	

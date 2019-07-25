@@ -29,4 +29,9 @@ app.service('typeTemplateService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../typeTemplate/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	
+	//查询规格列表，填充select2
+	this.selectOptionList = function(){
+		return $http.get("../typeTemplate/selectOptionList.do");
+	}
 });

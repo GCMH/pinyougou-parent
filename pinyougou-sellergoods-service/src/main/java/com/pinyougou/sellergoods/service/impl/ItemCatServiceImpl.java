@@ -70,12 +70,25 @@ public class ItemCatServiceImpl implements ItemCatService {
 
 	/**
 	 * 批量删除
+	 * @throws Exception 
 	 */
 	@Override
-	public void delete(Long[] ids) {
+	public void delete(Long[] ids) throws Exception {
+		boolean isDelete = true;//表示是否可以删除
+		//要么全部删除，要么全部不删除
 		for(Long id:ids){
-			itemCatMapper.deleteByPrimaryKey(id);
-		}		
+			if(itemCatMapper.countGoods(id) > 0) {
+				isDelete = false;//只要有子级商品，直接返回
+				break;
+			}
+		}
+		if(isDelete) {
+			for(Long id:ids){
+				itemCatMapper.deleteByPrimaryKey(id);
+			}
+		}else {
+			throw new Exception("存在子级商品，无法删除");
+		}
 	}
 	
 	

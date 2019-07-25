@@ -29,4 +29,9 @@ app.service('itemCatService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../itemCat/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	
+	//根据商品parentId查询子级商品
+	this.findByParentId = function(parentId){
+		return $http.get('../itemCat/findByParentId.do?parentId=' + parentId);
+	}
 });

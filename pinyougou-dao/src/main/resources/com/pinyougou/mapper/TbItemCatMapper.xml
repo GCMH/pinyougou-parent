@@ -193,4 +193,12 @@
       type_id = #{typeId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <!-- 根据当前商品ID，查询子级商品数量 -->
+  <select id="countGoods" parameterType="java.lang.Long" resultType="java.lang.Integer">
+  	SELECT count(*)
+  	FROM tb_item_cat
+  	WHERE parent_id = #{id,jdbcType=BIGINT}
+  </select>
+  
 </mapper>

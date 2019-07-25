@@ -1,5 +1,5 @@
  //控制层 
-app.controller('itemCatController' ,function($scope,$controller,itemCatService){	
+app.controller('itemCatController' ,function($scope,$controller,itemCatService,typeTemplateService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -26,26 +26,38 @@ app.controller('itemCatController' ,function($scope,$controller,itemCatService){
 	$scope.findOne=function(id){				
 		itemCatService.findOne(id).success(
 			function(response){
-				$scope.entity= response;					
+				$scope.entity= response;
+				typeTemplateService.findOne(response.typeId).success(
+					function(response_type){
+						$scope.entity.typeId={id:response.id,text:response_type.name};
+					}
+				);
+				
 			}
 		);				
 	}
 	
 	//保存 
 	$scope.save=function(){				
-		var serviceObject;//服务层对象  				
+		var serviceObject;//服务层对象  	
+		$scope.entity.typeId = $scope.entity.typeId.id;//{}
 		if($scope.entity.id!=null){//如果有ID
 			serviceObject=itemCatService.update( $scope.entity ); //修改  
 		}else{
-			serviceObject=itemCatService.add( $scope.entity  );//增加 
+			//alert($scope.entity);
+			serviceObject=itemCatService.add($scope.entity);//增加 
 		}				
 		serviceObject.success(
 			function(response){
 				if(response.success){
 					//重新查询 
-		        	$scope.reloadList();//重新加载
+					if($scope.ls.length - 1 >= 0){
+						$scope.findByParentId($scope.ls[$scope.ls.length - 1]);//重新加载父节点下级内容
+					}else{
+						$scope.findByParentId({parentId:0,id:0});
+					}
 				}else{
-					alert(response.message);
+					alert(response.info);
 				}
 			}		
 		);				
@@ -58,9 +70,17 @@ app.controller('itemCatController' ,function($scope,$controller,itemCatService){
 		itemCatService.dele( $scope.selectIds ).success(
 			function(response){
 				if(response.success){
-					$scope.reloadList();//刷新列表
-					$scope.selectIds=[];
-				}						
+					//重新查询 
+					if($scope.ls.length - 1 >= 0){
+						$scope.findByParentId($scope.ls[$scope.ls.length - 1]);//重新加载父节点下级内容
+					}else{
+						$scope.findByParentId({parentId:0,id:0});
+					}
+					
+				}else{
+					alert(response.info);
+				}
+				$scope.selectIds=[];
 			}		
 		);				
 	}
@@ -77,13 +97,48 @@ app.controller('itemCatController' ,function($scope,$controller,itemCatService){
 		);
 	}
 	
+	//面包屑
+	$scope.ls=[];
 	//根据parentId查询商品
-	$scope.findByParentId=function(parentId){
-		itemCatService.findByParentId(parentId).success(
+	$scope.findByParentId=function(entity){
+		
+		//判断是否加入面包屑数组
+		if(entity.id != 0 && ($scope.ls.length ==0 || $scope.ls[$scope.ls.length - 1].id < entity.id))
+			$scope.ls.push(entity);
+		
+		//当点击上级面包屑时，清除该级后续
+		for(var i = $scope.ls.length - 1; i >= 0 && $scope.ls[i].id > entity.id ;i--){
+			$scope.ls.splice(i,1);
+		}
+		
+		if($scope.ls.length - 1 < 0){
+			$scope.parentId = 0;
+		}else{
+			$scope.parentId = $scope.ls[$scope.ls.length - 1].id;
+		}
+		
+		itemCatService.findByParentId(entity.id).success(
 			function(response){
 				$scope.list = response;
 			}
 		);
 	}
+	//父节点
+	
+	
+	
+	$scope.typeList={data:[]}
+	//查询商品规格
+	$scope.findTypeList=function(){
+		
+		typeTemplateService.selectOptionList().success(
+			function(response){
+				
+				$scope.typeList={data:response};
+			}			
+		);
+	}
+	
+	
     
 });	

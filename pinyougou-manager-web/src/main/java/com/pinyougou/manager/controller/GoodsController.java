@@ -46,16 +46,18 @@ public class GoodsController {
 	 * @param goods
 	 * @return
 	 */
-	@RequestMapping("/add")
-	public Result add(@RequestBody TbGoods goods){
-		try {
-			goodsService.add(goods);
-			return new Result(true, "增加成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Result(false, "增加失败");
-		}
-	}
+	
+//manager 没有商品添加功能，可注释	
+//	@RequestMapping("/add")
+//	public Result add(@RequestBody TbGoods goods){
+//		try {
+//			goodsService.add(goods);
+//			return new Result(true, "增加成功");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new Result(false, "增加失败");
+//		}
+//	}
 	
 	/**
 	 * 修改

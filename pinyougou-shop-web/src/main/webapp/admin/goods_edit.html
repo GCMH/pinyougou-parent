@@ -28,6 +28,8 @@
 	<script type="text/javascript" src="../js/base.js"></script>
 	<script type="text/javascript" src="../js/service/goodsService.js"></script>
 	<script type="text/javascript" src="../js/service/uploadService.js"></script>
+	<script type="text/javascript" src="../js/service/itemCatService.js"></script>
+	<script type="text/javascript" src="../js/service/typeTemplateService.js"></script>
 	<script type="text/javascript" src="../js/controller/goodsController.js"></script>
 	<script type="text/javascript" src="../js/controller/baseController.js"></script>
 	
@@ -37,7 +39,7 @@
     
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController">
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List()">
 
             <!-- 正文区域 -->
             <section class="content">
@@ -75,18 +77,18 @@
 		                           	  <div class="col-md-10 data">
 		                           	  	<table>
 		                           	  		<tr>
-		                           	  			<td>
-		                           	  				<select class="form-control" >														
+		                           	  			<td>										<!-- 值，显示文本                                      单个对象             迭代对象 -->
+		                           	  				<select class="form-control" ng-model="entity.goods.category1Id" ng-options="item.id as item.name for item in itemCat1List">														
 		                           	  				</select>
 		                              			</td>
 		                              			<td>
-		                           	  				<select class="form-control select-sm" ></select>
+		                           	  				<select class="form-control select-sm" ng-model="entity.goods.category2Id" ng-model="entity.goods.category2Id" ng-options="item.id as item.name for item in itemCat2List" ></select>
 		                              			</td>
 		                              			<td>
-		                           	  				<select class="form-control select-sm" ></select>
+		                           	  				<select class="form-control select-sm" ng-model="entity.goods.category3Id" ng-model="entity.goods.category3Id" ng-options="item.id as item.name for item in itemCat3List"></select>
 		                              			</td>
 		                              			<td>
-		                           	  				模板ID:19
+		                           	  				模板ID:{{entity.goods.typeTemplateId}}
 		                              			</td>
 		                           	  		</tr>
 		                           	  	</table>
@@ -101,7 +103,7 @@
 		                           
 		                           <div class="col-md-2 title">品牌</div>
 		                           <div class="col-md-10 data">
-		                              <select class="form-control" ></select>
+		                              <select class="form-control" ng-model="entity.goods.brandId" ng-model="entity.goods.category2Id" ng-options="brand.id as brand.text for brand in typeTemplate.brandIds" ></select>
 		                           </div>
 		
 								   <div class="col-md-2 title">副标题</div>
@@ -162,7 +164,7 @@
 									            <td>
 									           		<img alt="" src="{{pojo.url}}" width="100px" height="100px">	            	 
 									            </td>
-												 <td> <button type="button" class="btn btn-default" title="删除" ><i class="fa fa-trash-o"></i> 删除</button></td> 
+												 <td> <button type="button" class="btn btn-default" ng-click="remove_image_entity($index)" title="删除" ><i class="fa fa-trash-o"></i> 删除</button></td> 
 					                      </tr>
 					                    </tbody>
 								 </table> 
@@ -354,6 +356,7 @@
                   <div class="btn-toolbar list-toolbar">
 				      <button class="btn btn-primary" ng-click="add()" ><i class="fa fa-save"></i>保存</button>
 				      <button class="btn btn-default" >返回列表</button>
+				      {{entity}}
 				  </div>
 			
             </section>

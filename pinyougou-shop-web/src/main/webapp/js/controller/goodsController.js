@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService,uploadService,itemCatService,typeTemplateService){	
+app.controller('goodsController' ,function($scope,$controller,goodsService,uploadService,itemCatService,typeTemplateService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -94,7 +94,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 	}
     
 	
-	$scope.entity={goodsDesc:{itemImages:[]}};
+	$scope.entity={goodsDesc:{itemImages:[],specificationItems:[]}};
 	//保存图片
 	$scope.add_image_entity=function(){
 		$scope.entity.goodsDesc.itemImages.push($scope.image_entity);
@@ -156,9 +156,35 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 			function(response){
 				$scope.typeTemplate = response;
 				$scope.typeTemplate.brandIds = JSON.parse($scope.typeTemplate.brandIds);
+				$scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.typeTemplate.customAttributeItems);
+			}
+		);
+		
+		//根据规格id查询规格具体选择
+		typeTemplateService.findSpecList(newValue).success(
+			function(response){
+				$scope.specList = response;
 			}
 		);
 	})
 	
+	//保存选择的规格选择
+	$scope.updateSpecAttribute = function($event,name,value){
+		//alert('123456');
+		var specificationItems = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems,"attributeName",name);
+		if(specificationItems != null){//不为空则添加，为空则初始化且添加
+			if($event.target.checked){//选中添加
+				specificationItems.attributeValue.push(value);
+			}else{//取消删除
+				specificationItems.attributeValue.splice(specificationItems.attributeValue.indexOf(value),1);
+				if(specificationItems.attributeValue.length == 0){//如果attributeValue为空，移除整条元素
+					$scope.entity.goodsDesc.specificationItems.splice(
+							$scope.entity.goodsDesc.specificationItems.indexOf(specificationItems),1);
+				}
+			}
+		}else{
+			$scope.entity.goodsDesc.specificationItems.push({"attributeName":name,"attributeValue":[value]});
+		}
+	}
 	
 });	

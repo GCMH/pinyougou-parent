@@ -26,7 +26,7 @@
 		<!-- username-parameter="" 对应用户名框name属性值，默认username -->
 		<!-- login-processing-url="" 对应表单action属性值，默认/login -->
 		
-		<form-login  login-page="/shoplogin.html" default-target-url="/admin/index.html" authentication-failure-url="/shoplogin.html" always-use-default-target="true"/>
+		<form-login  login-page="/shoplogin.html" default-target-url="/admin/index.html" authentication-failure-url="/shoplogin.html"/>
 		<!-- 取消csrf跨站请求伪造保护 -->
 		<csrf disabled="true"/>
 		

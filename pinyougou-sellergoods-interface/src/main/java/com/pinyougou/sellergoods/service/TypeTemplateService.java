@@ -63,4 +63,10 @@ public interface TypeTemplateService {
 	//用于selet2显示
 	public List<Map> selectOptionList();
 	
+	/**根据规格查询具体规格选择
+	 * @param id 规格id
+	 * @return 规格+规格选择[{27：网络,option:[{optionName:3G,specId:27},{optionName:4G,specId:27}]}]
+	 */
+	public List<Map> findSpecList(Long id);
+	
 }

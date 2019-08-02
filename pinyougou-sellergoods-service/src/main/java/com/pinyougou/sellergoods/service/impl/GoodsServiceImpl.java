@@ -1,14 +1,28 @@
 package com.pinyougou.sellergoods.service.impl;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.pinyougou.mapper.TbBrandMapper;
 import com.pinyougou.mapper.TbGoodsDescMapper;
 import com.pinyougou.mapper.TbGoodsMapper;
+import com.pinyougou.mapper.TbItemCatMapper;
+import com.pinyougou.mapper.TbItemMapper;
+import com.pinyougou.mapper.TbSellerMapper;
+import com.pinyougou.pojo.TbBrand;
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbGoodsExample;
 import com.pinyougou.pojo.TbGoodsExample.Criteria;
+import com.pinyougou.pojo.TbItem;
+import com.pinyougou.pojo.TbItemCat;
+import com.pinyougou.pojo.TbSeller;
 import com.pinyougou.pojogroup.Goods;
 import com.pinyougou.sellergoods.service.GoodsService;
 
@@ -24,9 +38,18 @@ public class GoodsServiceImpl implements GoodsService {
 
 	@Autowired
 	private TbGoodsMapper goodsMapper;
-	
 	@Autowired
 	private TbGoodsDescMapper goodDescMapper;
+	@Autowired
+	private TbItemMapper itemMapper;
+	@Autowired
+	private TbItemCatMapper itemCatMapper;
+	@Autowired
+	private TbBrandMapper brandMapper;
+	@Autowired
+	private TbSellerMapper sellerMapper;
+	
+	
 	/**
 	 * 查询全部
 	 */
@@ -57,10 +80,76 @@ public class GoodsServiceImpl implements GoodsService {
 		
 		//设置商品描述的商品ID
 		goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
-		
 		goodDescMapper.insert(goods.getGoodsDesc());//插入商品描述		
+		
+		
+		if("1".equals(goods.getGoods().getIsEnableSpec())) {//启用规格
+			for(TbItem item : goods.getItemList()) {
+				//构建title = SPU + 规格选择
+				String title = goods.getGoods().getGoodsName();//SPU
+				//迭代规格选项
+				Map<String, Object> map = JSON.parseObject(item.getSpec());
+				for(String key : map.keySet()) {
+					title += map.get(key);
+				}
+				
+				item.setTitle(title);
+				
+				setItemValues(item, goods);
+				
+				itemMapper.insert(item);
+			}
+		}else {//不启用规格，单个商品
+			TbItem item = new TbItem();
+			item.setTitle(goods.getGoods().getGoodsName());//设置标题为商品名
+			item.setPrice(goods.getGoods().getPrice());//设置价格
+			item.setNum(9999);//设置库存数量
+			item.setStatus("1");//1正常 2下架 3删除
+			item.setIsDefault("1");
+			item.setSpec("{}");//空规格
+			
+			setItemValues(item, goods);
+			
+			itemMapper.insert(item);
+		}
+		
+		
+		
+		
+		
 	}
-
+	
+	/**设置插入item表中数据
+	 * @param item：规格选项
+	 * @param goods：商品
+	 */
+	private void setItemValues(TbItem item, Goods goods) {
+		item.setCategoryid(goods.getGoods().getCategory3Id());//设置三级标题
+		item.setCreateTime(new Date());
+		item.setUpdateTime(new Date());
+		
+		//设置商品id，商家id
+		item.setGoodsId(goods.getGoods().getId());
+		item.setSeller(goods.getGoods().getSellerId());
+		
+		//分类名称
+		TbItemCat itemCat = itemCatMapper.selectByPrimaryKey(goods.getGoods().getCategory3Id());
+		item.setCategory(itemCat.getName());
+		
+		//品牌名称
+		TbBrand brand = brandMapper.selectByPrimaryKey(goods.getGoods().getBrandId());
+		item.setBrand(brand.getName());
+		
+		//商家名称（店铺名不是公司名）
+		TbSeller seller = sellerMapper.selectByPrimaryKey(goods.getGoods().getSellerId());
+		item.setSeller(seller.getNickName());
+		
+		//图片
+		List<Map> imageList = JSON.parseArray(goods.getGoodsDesc().getItemImages(),Map.class);
+		if(imageList.size() > 0) {
+			item.setImage((String)imageList.get(0).get("url"));
+		}
+	}
 	
 	/**
 	 * 修改
@@ -91,7 +180,7 @@ public class GoodsServiceImpl implements GoodsService {
 	}
 	
 	
-		@Override
+	@Override
 	public PageResult findPage(TbGoods goods, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
 		
@@ -100,7 +189,7 @@ public class GoodsServiceImpl implements GoodsService {
 		
 		if(goods!=null){			
 						if(goods.getSellerId()!=null && goods.getSellerId().length()>0){
-				criteria.andSellerIdLike("%"+goods.getSellerId()+"%");
+				criteria.andSellerIdEqualTo(goods.getSellerId());//商家名最好精确匹配，不要使用like
 			}
 			if(goods.getGoodsName()!=null && goods.getGoodsName().length()>0){
 				criteria.andGoodsNameLike("%"+goods.getGoodsName()+"%");

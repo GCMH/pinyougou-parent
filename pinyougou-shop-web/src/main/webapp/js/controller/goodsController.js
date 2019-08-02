@@ -42,7 +42,7 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,uploa
 					editor.html("");//清空富文本编辑器
 					alert("添加成功！");
 				}else{
-					alert(response.message);
+					alert(response.info);
 				}
 			}		
 		);				
@@ -65,7 +65,7 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,uploa
 	$scope.searchEntity={};//定义搜索对象 
 	
 	//搜索
-	$scope.search=function(page,rows){			
+	$scope.query=function(page,rows){			
 		goodsService.search(page,rows,$scope.searchEntity).success(
 			function(response){
 				$scope.list=response.rows;	
@@ -185,6 +185,35 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,uploa
 		}else{
 			$scope.entity.goodsDesc.specificationItems.push({"attributeName":name,"attributeValue":[value]});
 		}
+	}
+	
+	//$scope.entity={goodsDesc:{itemImages:[],specificationItems:[{attributeName:网络,attributeValue:[3G,4g]},{attributeName:内存:[32G,64G]}]}};
+	//[{spec:[{网络：2g，内存：32G}],price:0,num:9999,status:'0',isDefault:'0'}，
+	//[{spec:[{网络：4g，内存：32G}],price:0,num:9999,status:'0',isDefault:'0'}]]
+	//创建SKU列表
+	$scope.createItemList = function(){
+		//alert('into createItemList');
+		$scope.entity.itemList = [{spec:{},price:0,num:9999,status:'0',isDefault:'0'}];
+		var items = $scope.entity.goodsDesc.specificationItems;
+		for(var i = 0; i < items.length; i++){
+			$scope.entity.itemList = addRows($scope.entity.itemList, items[i].attributeName, items[i].attributeValue);
+		}
+	}
+	
+	addRows = function(items,name,values){
+		var itemsList = [];
+		for(var i = 0; i < items.length; i++){
+			var oldRow = items[i];
+			
+			for(var j = 0; j < values.length; j++){
+				var newRow = JSON.parse(JSON.stringify(oldRow));
+				//alert(values + "--" + values[j] + "--" + j + "--" + values.length);
+				newRow.spec[name] = values[j];
+				//alert(JSON.stringify(newRow)+"--" + name + "--" + values[j]);
+				itemsList.push(newRow);
+			}
+		}
+		return itemsList;
 	}
 	
 });	

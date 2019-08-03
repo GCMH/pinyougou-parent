@@ -41,7 +41,7 @@ app.controller("baseController",function($scope){//父类控制器,其他控制�
 			return rValue;
 		}
 		
-		//判断集合中元素指定k-v是否存在，[{key:value,key1:value1},{...}]
+		//判断集合中元素（map）指定k-v是否存在，[{key:value,key1:value1},{...}]
 		$scope.searchObjectByKey = function(list,key,value){
 			for(var i = 0; i < list.length; i++){
 				if(list[i][key] == value)

@@ -18,10 +18,12 @@ import com.pinyougou.mapper.TbItemMapper;
 import com.pinyougou.mapper.TbSellerMapper;
 import com.pinyougou.pojo.TbBrand;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbGoodsDesc;
 import com.pinyougou.pojo.TbGoodsExample;
 import com.pinyougou.pojo.TbGoodsExample.Criteria;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojo.TbItemCat;
+import com.pinyougou.pojo.TbItemExample;
 import com.pinyougou.pojo.TbSeller;
 import com.pinyougou.pojogroup.Goods;
 import com.pinyougou.sellergoods.service.GoodsService;
@@ -75,14 +77,25 @@ public class GoodsServiceImpl implements GoodsService {
 	@Override
 	public void add(Goods goods) {
 		goods.getGoods().setAuditStatus("0");//设置商品状态，未审核
-		//插入商品
+		//插入商品基本表
 		goodsMapper.insert(goods.getGoods());
 		
-		//设置商品描述的商品ID
+		//设置商品描述表
 		goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
 		goodDescMapper.insert(goods.getGoodsDesc());//插入商品描述		
 		
-		
+		//插入item表
+		insertItemTableOfGoods(goods);
+	
+	}
+	
+	
+	
+	/**
+	 * 将商品的商品规格插入item表中
+	 * @param goods 商品组合类
+	 */
+	private void insertItemTableOfGoods(Goods goods) {
 		if("1".equals(goods.getGoods().getIsEnableSpec())) {//启用规格
 			for(TbItem item : goods.getItemList()) {
 				//构建title = SPU + 规格选择
@@ -112,12 +125,8 @@ public class GoodsServiceImpl implements GoodsService {
 			
 			itemMapper.insert(item);
 		}
-		
-		
-		
-		
-		
 	}
+	
 	
 	/**设置插入item表中数据
 	 * @param item：规格选项
@@ -155,8 +164,19 @@ public class GoodsServiceImpl implements GoodsService {
 	 * 修改
 	 */
 	@Override
-	public void update(TbGoods goods){
-		goodsMapper.updateByPrimaryKey(goods);
+	public void update(Goods goods){
+		//更新基本表数据
+		goodsMapper.updateByPrimaryKey(goods.getGoods());
+		//更新扩展表数据
+		goodDescMapper.updateByPrimaryKey(goods.getGoodsDesc());
+		//先删除SKU再添加
+		//删除
+		TbItemExample example = new TbItemExample();
+		com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(goods.getGoods().getId());
+		itemMapper.deleteByExample(example);
+		//添加
+		insertItemTableOfGoods(goods);	
 	}	
 	
 	/**
@@ -165,8 +185,23 @@ public class GoodsServiceImpl implements GoodsService {
 	 * @return
 	 */
 	@Override
-	public TbGoods findOne(Long id){
-		return goodsMapper.selectByPrimaryKey(id);
+	public Goods findOne(Long id){
+		Goods goods = new Goods();
+		//查询并设置商品信息
+		TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+		goods.setGoods(tbGoods);
+		//查询并设置商品描述信息
+		TbGoodsDesc tbGoodsDesc = goodDescMapper.selectByPrimaryKey(id);
+		goods.setGoodsDesc(tbGoodsDesc);
+		//查询并设置商品规格信息
+		TbItemExample example = new TbItemExample();
+		com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(id);
+		List<TbItem> tbItem = itemMapper.selectByExample(example );
+		goods.setItemList(tbItem);
+		
+		//返回商品实例（包含商品基本信息，商品描述信息，商品规格信息）
+		return goods;
 	}
 
 	/**

@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller,goodsService,uploadService,itemCatService,typeTemplateService){	
+app.controller('goodsController' ,function($scope,$location,$controller,goodsService,uploadService,itemCatService,typeTemplateService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -23,24 +23,50 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,uploa
 	}
 	
 	//查询实体 
-	$scope.findOne=function(id){				
-		goodsService.findOne(id).success(
-			function(response){
-				$scope.entity= response;					
-			}
-		);				
+	$scope.findOne=function(){
+		var id = $location.search()['id'];
+		if(id == null){
+			return;
+		}else{
+			goodsService.findOne(id).success(
+				function(response){
+					$scope.entity= response;
+					//商品描述
+					editor.html($scope.entity.goodsDesc.introduction);
+					//商品图片转换与显示
+					$scope.entity.goodsDesc.itemImages = JSON.parse($scope.entity.goodsDesc.itemImages);
+					//扩展属性转换与显示
+					$scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.entity.goodsDesc.customAttributeItems);
+					//规格选项转换与显示
+					$scope.entity.goodsDesc.specificationItems = JSON.parse($scope.entity.goodsDesc.specificationItems);
+					//商品规格
+					for(var i = 0; i < $scope.entity.itemList.length; i++){
+						//alert($scope.entity.itemList[i]);
+						$scope.entity.itemList[i].spec = JSON.parse($scope.entity.itemList[i].spec);
+					}
+				}
+			);	
+		}
+					
 	}
 	
 	//添加商品
-	$scope.add=function(){				
+	$scope.save=function(){				
 		$scope.entity.goodsDesc.introduction = editor.html();//获取富文本编辑器内容
 		
-		goodsService.add($scope.entity).success(
+		var serverObject;
+		if($scope.entity.goods.id != null){
+			serverObject = goodsService.update($scope.entity)//修改
+		}else{
+			serverObject = goodsService.add($scope.entity)//添加
+		}
+		
+		serverObject.success(
 			function(response){
 				if(response.success){
 					$scope.entity={};
 					editor.html("");//清空富文本编辑器
-					alert("添加成功！");
+					alert("添加s成功！");
 				}else{
 					alert(response.info);
 				}
@@ -156,7 +182,10 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,uploa
 			function(response){
 				$scope.typeTemplate = response;
 				$scope.typeTemplate.brandIds = JSON.parse($scope.typeTemplate.brandIds);
-				$scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.typeTemplate.customAttributeItems);
+				if($location.search()['id'] == null){//如果为null则是添加操作，放在执行修改中的读取操作
+					$scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.typeTemplate.customAttributeItems);
+				}
+				
 			}
 		);
 		
@@ -214,6 +243,36 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,uploa
 			}
 		}
 		return itemsList;
+	}
+	
+	$scope.status = ['未审核','审核通过','审核未通过','已关闭'];
+	
+	//分类列表，记录所有分类
+	$scope.itemCatList=[];
+	$scope.itemCatList = function(){
+		//alert('into itemCatList');
+		itemCatService.findAll().success(
+				
+			function(response){
+				for(var i = 0; i < response.length; i++){
+					$scope.itemCatList[response[i].id] =  response[i].name;
+				}
+			}
+		);
+	}
+	
+	//根据goodsDesc.specificationItems判断是否勾选规格选项
+	$scope.checkAttributeValue = function(specName,optionName){
+		//alert('into checkAttributeValue' + specName + optionName);
+		var optionList = [];
+		//如果可以查到规格名（如网络等）且可以查到该规格的值（如联通、移动等）返回true
+		if((optionList = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems,'attributeName',specName)) != null &&
+				optionList.attributeValue.indexOf(optionName) >= 0){
+			return true;
+		}else{
+			//alert(optionList);
+			return false;
+		}
 	}
 	
 });	

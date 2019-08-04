@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService){	
+app.controller('goodsController' ,function($scope,  $controller, itemCatService, goodsService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -68,7 +68,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 	$scope.searchEntity={};//定义搜索对象 
 	
 	//搜索
-	$scope.search=function(page,rows){			
+	$scope.query=function(page,rows){			
 		goodsService.search(page,rows,$scope.searchEntity).success(
 			function(response){
 				$scope.list=response.rows;	
@@ -77,4 +77,36 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 		);
 	}
     
+	
+	$scope.status = ['未审核','审核通过','审核未通过','已关闭'];
+	
+	//分类列表，记录所有分类
+	$scope.itemCatList=[];
+	$scope.itemCatList = function(){
+		//alert('into itemCatList');
+		itemCatService.findAll().success(
+			function(response){
+				for(var i = 0; i < response.length; i++){
+					//alert(response[i].name);
+					$scope.itemCatList[response[i].id] =  response[i].name;
+				}
+			}
+		);
+	}
+	
+	//批量修改选中商品数量
+	$scope.updateStatus = function(status){
+		goodsService.updateStatus($scope.selectIds,status).success(
+			function(response){
+				if(response.success){
+					$scope.selectId = [];
+					alert(response.info);
+					$scope.reloadList();
+				}else{
+					alert(response.info);
+				}
+			}
+		);
+	}
+	
 });	

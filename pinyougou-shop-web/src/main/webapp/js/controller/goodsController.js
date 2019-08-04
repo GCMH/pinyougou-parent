@@ -66,7 +66,8 @@ app.controller('goodsController' ,function($scope,$location,$controller,goodsSer
 				if(response.success){
 					$scope.entity={};
 					editor.html("");//清空富文本编辑器
-					alert("添加s成功！");
+					alert("添加成功！");
+					location.href="goods.html";
 				}else{
 					alert(response.info);
 				}

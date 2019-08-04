@@ -55,6 +55,7 @@ public class GoodsController {
 		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
 		goods.getGoods().setSellerId(sellerId);
 		
+		
 		try {
 			goodsService.add(goods);
 			return new Result(true, "增加成功");
@@ -75,7 +76,11 @@ public class GoodsController {
 		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
 		//当前商家id要和修改商品的id一致，要和根据修改商品从表中查询到的商品id一致
 		Goods goods_f = goodsService.findOne(goods.getGoods().getId());
-		if(sellerId.equals(goods_f.getGoods().getSellerId()) && sellerId.equals(goods.getGoods().getSellerId())) {
+		if(!sellerId.equals(goods_f.getGoods().getSellerId()) || !sellerId.equals(goods.getGoods().getSellerId())) {
+			System.out.println("sellerId:" + sellerId);
+			System.out.println("goods_f.sellerId:"+ goods_f.getGoods().getSellerId());
+			System.out.println("goods.sellerId:"+ goods.getGoods().getSellerId());
+			
 			return new Result(false, "非法操作");
 		}
 		

@@ -65,7 +65,9 @@ public class ContentController {
 	@RequestMapping("/update")
 	public Result update(@RequestBody TbContent content){
 		try {
+			//System.out.println(content.getCategoryId());
 			contentService.update(content);
+			//System.out.println(content.getCategoryId());
 			return new Result(true, "修改成功");
 		} catch (Exception e) {
 			e.printStackTrace();

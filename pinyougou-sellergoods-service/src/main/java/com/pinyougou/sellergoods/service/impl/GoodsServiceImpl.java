@@ -1,4 +1,5 @@
 package com.pinyougou.sellergoods.service.impl;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class GoodsServiceImpl implements GoodsService {
 	 */
 	@Override
 	public List<TbGoods> findAll() {
-		return goodsMapper.selectByExample(null);
+		return goodsMapper.selectByExample(null);	
 	}
 
 	/**
@@ -228,6 +229,7 @@ public class GoodsServiceImpl implements GoodsService {
 		
 		criteria.andIsDeleteIsNull();//显示isDelete为空的商品，初始为null,逻辑删除置1。
 		
+		
 		if(goods!=null){			
 						if(goods.getSellerId()!=null && goods.getSellerId().length()>0){
 				criteria.andSellerIdEqualTo(goods.getSellerId());//商家名最好精确匹配，不要使用like
@@ -268,6 +270,20 @@ public class GoodsServiceImpl implements GoodsService {
 			goodsMapper.updateByPrimaryKey(goods);
 		}
 		
+	}
+	
+	/** 根据SPU的id集合查询SKU列表
+	 * @param goodsIds SPU的id
+	 * @param status SPU状态
+	 * @return SPU的id集合中每一个SPU对应的SKU列表的集合
+	 */
+	public List<TbItem> findItemListByGoodsIdListAndStatus(Long[] goodsIds, String status){
+		TbItemExample example = new TbItemExample();
+		com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andStatusEqualTo(status);
+		criteria.andGoodsIdIn(Arrays.asList(goodsIds));
+		
+		return itemMapper.selectByExample(example);
 	}
 	
 }

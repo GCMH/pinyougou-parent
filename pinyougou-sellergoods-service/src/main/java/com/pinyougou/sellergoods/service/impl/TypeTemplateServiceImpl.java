@@ -3,6 +3,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -112,40 +114,62 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 		}
 		
 		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
+		
+		saveToRedis();
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-
-		
-		//返回{id:1,text:xxx}格式用于select2查询显示
-		@Override
-		public List<Map> selectOptionList() { 
-			// TODO Auto-generated method stub
-			return typeTemplateMapper.selectOptionList();
-		}
-
-		@Override
-		public List<Map> findSpecList(Long id) {
-			//String
-			TbTypeTemplate tbTypeTemplate =typeTemplateMapper.selectByPrimaryKey(id);
-			//specIds=[{"id":27,"text":"网络"},{"id":32,"text":"机身内存"}]
-			//一个map [{id:27,text:网络}]
-			List<Map> specList = JSON.parseArray(tbTypeTemplate.getSpecIds(),Map.class); 
-			//System.out.println("TypeTemplateServiceImpl->findSpecList->toJsonString:" + JSON.toJSON(specList));
-			//查询每一个规格的规格选项
-			for(Map map:specList) {
-				TbSpecificationOptionExample example = new TbSpecificationOptionExample();
-				com.pinyougou.pojo.TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
-				criteria.andSpecIdEqualTo(new Long((Integer)map.get("id")));
-				//[{id:99,optionName:4G,specId:27},{id:100,optionName:3G,specId:27}...]
-				List<TbSpecificationOption> specOptionList =  specificationOptionMapper.selectByExample(example );
-				// [{id:27,text:网络,options:[{id:99,optionName:4G,specId:27},{id:100,optionName:3G,specId:27}...]}]
-				map.put("options", specOptionList);
-				//System.out.println("for-TypeTemplateServiceImpl->findSpecList->toJsonString:" + JSON.toJSON(map));
-				//System.out.println("TypeTemplateServiceImpl->findSpecList->toJsonString:" + JSON.toJSON(specList));
-			}
+	
+	@Autowired	
+	private RedisTemplate redisTemplate;
+	
+	/**
+	 * 将模板表中每一个模板对应的品牌列表，规格选项列表缓存。
+	 */
+	private void saveToRedis() {
+		List<TbTypeTemplate> typeTemplateList = findAll();
+		for(TbTypeTemplate typeTemplate : typeTemplateList) {
+			//缓存品牌列表
+			List<Map> brandList = JSON.parseArray(typeTemplate.getBrandIds(), Map.class);
+			//key为模板ID，value为对应模板ID的品牌列表
+			redisTemplate.boundHashOps("brandList").put(typeTemplate.getId(), brandList);
 			
-			// [{id:27,text:网络,options[{id:99,optionName:4G,specId:27},{id:100,optionName:3G,specId:27}...]}]
-			return specList;
+			//缓存规格列表
+			List<Map> specList = findSpecList(typeTemplate.getId());
+			redisTemplate.boundHashOps("specList").put(typeTemplate.getId(), specList);
 		}
+		//System.out.println("缓存模板对应的品牌列表，规格选项列表");
+	}	
+		
+	//返回{id:1,text:xxx}格式用于select2查询显示
+	@Override
+	public List<Map> selectOptionList() { 
+		// TODO Auto-generated method stub
+		return typeTemplateMapper.selectOptionList();
+	}
+
+	@Override
+	public List<Map> findSpecList(Long id) {
+		//String
+		TbTypeTemplate tbTypeTemplate =typeTemplateMapper.selectByPrimaryKey(id);
+		//specIds=[{"id":27,"text":"网络"},{"id":32,"text":"机身内存"}]
+		//一个map [{id:27,text:网络}]
+		List<Map> specList = JSON.parseArray(tbTypeTemplate.getSpecIds(),Map.class); 
+		//System.out.println("TypeTemplateServiceImpl->findSpecList->toJsonString:" + JSON.toJSON(specList));
+		//查询每一个规格的规格选项
+		for(Map map:specList) {
+			TbSpecificationOptionExample example = new TbSpecificationOptionExample();
+			com.pinyougou.pojo.TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
+			criteria.andSpecIdEqualTo(new Long((Integer)map.get("id")));
+			//[{id:99,optionName:4G,specId:27},{id:100,optionName:3G,specId:27}...]
+			List<TbSpecificationOption> specOptionList =  specificationOptionMapper.selectByExample(example );
+			// [{id:27,text:网络,options:[{id:99,optionName:4G,specId:27},{id:100,optionName:3G,specId:27}...]}]
+			map.put("options", specOptionList);
+			//System.out.println("for-TypeTemplateServiceImpl->findSpecList->toJsonString:" + JSON.toJSON(map));
+			//System.out.println("TypeTemplateServiceImpl->findSpecList->toJsonString:" + JSON.toJSON(specList));
+		}
+		
+		// [{id:27,text:网络,options[{id:99,optionName:4G,specId:27},{id:100,optionName:3G,specId:27}...]}]
+		return specList;
+	}
 	
 }

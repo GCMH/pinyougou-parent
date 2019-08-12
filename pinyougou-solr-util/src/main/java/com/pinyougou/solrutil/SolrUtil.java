@@ -44,7 +44,7 @@ public class SolrUtil {
 	
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath*:spring/applicationContext*.xml");
-		//标识了bean但未配置bean名称，默认为首字母小写，其余字母不变
+		//标识了bean但未配置bean名称，默认为首字母小写， 其余字母不变
 		SolrUtil solrUtil = (SolrUtil)applicationContext.getBean("solrUtil");
 		solrUtil.importItemData();
 	}

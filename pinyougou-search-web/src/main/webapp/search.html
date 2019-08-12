@@ -171,7 +171,10 @@
 				<div class="type-wrap">
 					<div class="fl key">商品分类</div>
 					<div class="fl value">
-						<a href="#">手机</a>  <a href="#">电视</a>
+						<span ng-repeat="category in resultMap.categoryList">
+							<a href="#">{{category}}</a>
+						</span>
+						
 					</div>
 					<div class="fl ext"></div>
 				</div>
@@ -367,8 +370,8 @@
 											<i>{{item.price}}</i>
 										</strong>
 								</div>
-								<div class="attr">
-									<em>{{item.title}}</em>
+								<div class="attr" ng-bind-html="item.title | trustHtml"><!-- 将item.title使用trustHtml过滤器转换为信任html -->
+									
 								</div>
 								<div class="cu">
 									<em></em>

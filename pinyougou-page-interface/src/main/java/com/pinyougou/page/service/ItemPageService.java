@@ -8,4 +8,11 @@ public interface ItemPageService {
 	 * @return
 	 */
 	public boolean genItemHtml(Long goodsId);
+	
+	
+	/** 根据被删除商品id集合，批量删除商品详情页。
+	 * @param goodsIds 被删除商品的id集合
+	 * @return 删除成功返回true反之返回false
+	 */
+	public boolean deleteItemHtml(Long[] goodsIds);
 }

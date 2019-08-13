@@ -2,15 +2,24 @@ package com.pinyougou.manager.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.page.service.ItemPageService;
+import com.alibaba.fastjson.JSON;
+//import com.pinyougou.page.service.ItemPageService;//后续使用消息队列解耦
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
-import com.pinyougou.search.service.ItemSearchService;
+//import com.pinyougou.search.service.ItemSearchService; //后续使用消息队列解耦
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
@@ -27,8 +36,38 @@ public class GoodsController {
 	@Reference
 	private GoodsService goodsService;
 	
-	@Reference(timeout=100000)
-	private ItemSearchService itemSearchService;
+	/**
+	 * jms模板
+	 */
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	
+	/**
+	 * 存放删除solr消息的消息队列
+	 */
+	@Autowired
+	private Destination queueSolrDeleteDestination;
+	
+	/**
+	 * 存放向solr中添加数据的消息
+	 */
+	@Autowired
+	private Destination queueSolrDestination;
+	
+	/**
+	 * 存放生成静态页消息
+	 */
+	@Autowired
+	private Destination topicPageDestination;
+	
+	/**
+	 * 存放删除静态页消息
+	 */
+	@Autowired
+	private Destination topicPageDeleteDestination;
+	
+//	@Reference(timeout=100000) //后续使用消息队列解耦
+//	private ItemSearchService itemSearchService;
 	/**
 	 * 返回全部列表
 	 * @return
@@ -92,17 +131,41 @@ public class GoodsController {
 		return goodsService.findOne(id);		
 	}
 	
+	
 	/**
 	 * 批量删除
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping("/delete")
-	public Result delete(Long [] ids){
+	public Result delete(final Long [] ids){
 		try {
 			goodsService.delete(ids);
 			//删除solr中数据
-			itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+			//itemSearchService.deleteByGoodsIds(Arrays.asList(ids));//后续使用消息队列解耦
+			//向消息队列发送删除solr数据的消息
+			jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					// TODO Auto-generated method stub
+					return session.createObjectMessage(ids);
+				}
+			});
+			
+			
+			//消息队列发送删除静态页的消息
+			jmsTemplate.send(topicPageDeleteDestination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					// TODO Auto-generated method stub
+					return session.createObjectMessage(ids);
+				}
+			});
+			
+			
+			
+			
+			
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,6 +186,9 @@ public class GoodsController {
 	}
 	
 	
+	
+//	@Reference
+//	private ItemPageService itemPageService; //通过消息队列解耦
 	/**
 	 * 批量修改商品状态
 	 * @param ids 修改商品id
@@ -138,26 +204,39 @@ public class GoodsController {
 				//1.将审核通过的记录添加到solr
 				List<TbItem> itemList = goodsService.findItemListByGoodsIdListAndStatus(ids, status);
 				//System.out.println("managerweb->goodsControlelr->itemList:" + itemList.size());
-				itemSearchService.importList(itemList);//调用searchService中方法，将审核通过的列表导入solr中
+				//itemSearchService.importList(itemList);//调用searchService中方法，将审核通过的列表导入solr中//后续使用消息队列解耦
 				
-				//2.将审核通过的记录生成静态页。
-				for(Long goodsId : ids) {
-					itemPageService.genItemHtml(goodsId);
+				//1.向消息队列发送更新solr的消息
+				//1.1将List<TbItem>转换为json字符串
+				final String jsonString = JSON.toJSONString(itemList);
+				jmsTemplate.send(queueSolrDestination, new MessageCreator() {
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						// TODO Auto-generated method stub
+						return session.createTextMessage(jsonString);
+					}
+				});
+				
+				
+				//2.将审核通过的记录生成静态页。，通过消息队列解耦
+				for(final Long goodsId : ids) {
+					//itemPageService.genItemHtml(goodsId);
+					jmsTemplate.send(topicPageDestination, new MessageCreator() {
+						@Override
+						public Message createMessage(Session session) throws JMSException {
+							// TODO Auto-generated method stub
+							return session.createTextMessage(goodsId+"");
+						}
+					});
 				}
-				
 			}
-			
 			return new Result(true, "修改成功！");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new Result(false, "修改失败！");
 		}
-	} 
-	
-	@Reference
-	private ItemPageService itemPageService;
-	
+	}
 	
 	/**测试生成静态页面 
 	 * @param goodsId

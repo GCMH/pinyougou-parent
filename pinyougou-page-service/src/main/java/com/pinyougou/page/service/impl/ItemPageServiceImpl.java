@@ -1,18 +1,17 @@
 package com.pinyougou.page.service.impl;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aspectj.apache.bcel.classfile.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.fastjson.asm.FieldWriter;
 import com.pinyougou.mapper.TbGoodsDescMapper;
 import com.pinyougou.mapper.TbGoodsMapper;
 import com.pinyougou.mapper.TbItemCatMapper;
@@ -93,6 +92,21 @@ public class ItemPageServiceImpl implements ItemPageService{
 			e.printStackTrace();
 			return false;
 		} 
+	}
+
+	@Override
+	public boolean deleteItemHtml(Long[] goodsIds) {
+		for(Long goodsId : goodsIds) {
+			try {
+				new File(pagedir + goodsId + ".html").delete();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

@@ -292,5 +292,11 @@
 		<module>pinyougou-page-interface</module>
 		<module>pinyougou-page-service</module>
 		<module>pinyougou-page-web</module>
+		<module>pinyougou-cart-interface</module>
+		<module>pinyougou-cart-service</module>
+		<module>pinyougou-cart-web</module>
+		<module>pinyougou-user-interface</module>
+		<module>pinyougou-user-service</module>
+		<module>pinyougou-user-web</module>
 	</modules>
 </project>

@@ -3,6 +3,12 @@ package com.pinyougou.pojo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+
+
+/**购物车对象
+ * @author 依风
+ *
+ */
 public class TbOrderItem implements Serializable{
     private Long id;
 

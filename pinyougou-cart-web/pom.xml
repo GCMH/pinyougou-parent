@@ -8,44 +8,44 @@
   <artifactId>pinyougou-cart-web</artifactId>
   <packaging>war</packaging>
   
-   <dependencies>
-  		<!-- Spring -->
+    <dependencies>
+    <!-- Spring -->
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-context</artifactId>		
+		<artifactId>spring-context</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-beans</artifactId>		
+		<artifactId>spring-beans</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-webmvc</artifactId>		
+		<artifactId>spring-webmvc</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-jdbc</artifactId>		
+		<artifactId>spring-jdbc</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-aspects</artifactId>		
+		<artifactId>spring-aspects</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-jms</artifactId>		
+		<artifactId>spring-jms</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-context-support</artifactId>		
+		<artifactId>spring-context-support</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>
-		<artifactId>spring-test</artifactId>	<!-- 比demo多的test -->	
+		<artifactId>spring-test</artifactId>
 	</dependency>
 	<!-- dubbo相关 -->
 	<dependency>
 		<groupId>com.alibaba</groupId>
-		<artifactId>dubbo</artifactId>	
+		<artifactId>dubbo</artifactId>
 		<exclusions>
         		<exclusion>
             		<groupId>javax.servlet</groupId>
@@ -53,55 +53,81 @@
         		</exclusion>
     	</exclusions>
 	</dependency>
+	
 	<dependency>
 		<groupId>org.apache.zookeeper</groupId>
-		<artifactId>zookeeper</artifactId>	
+		<artifactId>zookeeper</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>com.github.sgroschupf</groupId>
-		<artifactId>zkclient</artifactId>		
+		<artifactId>zkclient</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>		<!-- 比demo多的 -->
+		<artifactId>junit</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>com.alibaba</groupId>
-		<artifactId>fastjson</artifactId>		
+		<artifactId>fastjson</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>javassist</groupId>
-		<artifactId>javassist</artifactId>		
+		<artifactId>javassist</artifactId>
 	</dependency>
 	<dependency>
 	    <groupId>commons-codec</groupId>
-	    <artifactId>commons-codec</artifactId>	   
+	    <artifactId>commons-codec</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>javax.servlet</groupId>
 		<artifactId>servlet-api</artifactId>		
 		<scope>provided</scope>
 	</dependency>
+	
+	<!-- spring security 与 cas集成 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
 
-	<dependency>
-		<groupId>com.pinyougou</groupId>
-		<artifactId>pinyougou-dao</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-		<groupId>com.pinyougou</groupId>
-		<artifactId>pinyougou-cart-interface</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-		<groupId>com.pinyougou</groupId>
-		<artifactId>pinyougou-common</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</dependency>
-   </dependencies>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+	
+	
+	<dependency>  
+	   <groupId>org.springframework.security</groupId>  
+	   <artifactId>spring-security-cas</artifactId>  
+	</dependency>     
+	<dependency>  
+	        <groupId>org.jasig.cas.client</groupId>  
+	        <artifactId>cas-client-core</artifactId>  
+	        <exclusions>  
+	            <exclusion>  
+	                <groupId>org.slf4j</groupId>  
+	                <artifactId>log4j-over-slf4j</artifactId>  
+	            </exclusion>  
+	        </exclusions>  
+	</dependency> 
+	
+	
+<!-- 本地依赖 -->
+		<dependency>
+			<groupId>com.pinyougou</groupId>
+			<artifactId>pinyougou-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pinyougou</groupId>
+			<artifactId>pinyougou-cart-interface</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+  </dependencies>
   
-  <build>  
-	  <plugins>	     
+  
+    <build>  
+	  <plugins>
 	      <plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
@@ -115,5 +141,4 @@
 	  	  </plugin>
 	  </plugins>  
     </build>
-  
 </project>

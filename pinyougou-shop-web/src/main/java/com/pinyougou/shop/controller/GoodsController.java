@@ -56,6 +56,7 @@ public class GoodsController {
 		goods.getGoods().setSellerId(sellerId);
 		
 		
+		
 		try {
 			goodsService.add(goods);
 			return new Result(true, "增加成功");

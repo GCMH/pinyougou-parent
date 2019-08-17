@@ -23,5 +23,19 @@ app.service('cartService',function($http){
 		}
 		return totalValue;
 	}
+	
+	///--------------------地址相关\/-------------------------------//
+	
+	//获取地址列表，（从address表中查询当前用户地址列表）
+	this.findAddressList=function(){
+		return $http.get('address/findListByLoginUser.do');	
+	}
+	
+	//保存订单
+	this.submitOrder=function(order){
+		return $http.post('order/add.do',order);		
+	}
 
+	
+	
 });
